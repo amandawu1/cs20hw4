@@ -1,20 +1,171 @@
 
 <html>
 <head>
-        <link rel="stylesheet" type = "text/css" href="style.css"> 
+        <link rel="stylesheet" type = "text/css" href="style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
         <title> Joe's Hotdog Stand </title>
 </head>
 
-<header>
-        <br> 
-        <h1>Joe's Hotdog Stand</h1> 
-        <br>
-</header>
-
 <body>
         <br>
-        <script src="joeshotdogs.js"></script>
+        <script>
+                function MenuItem(name, price)
+                {
+                        this.name = name;
+                        this.price = price;
+                }
+
+                menuItems = new Array(
+                        new MenuItem("Hotdog", 4),
+                        new MenuItem("French Fries", 3.5),
+                        new MenuItem("Soda", 1.75)
+                );
+
+                function chooseItem(name, min, max)
+                {
+                        var t= "";
+                        t = "<select name='" + name + "' size='1'>";
+                        for (j=min; j<=max; j++) {
+                                t += "<option>" + j + "</option>";
+                        }
+                        t += "<option>" + 10 + "</option>";
+                        t += "<option>" + 15 + "</option>";
+                        t += "<option>" + 20 + "</option>";
+                        t+= "</select>";
+                        return t;
+                }
+
+                function tableData(content, className="")
+                {
+                        return "<td class = '" + className + "'>" + content + "</td>";
+                }
+        </script>
+
+        <h1>Joe's Hotdog Stand</h1>
+        <form>
+                <table class="choose" border="0.5" cellpadding="3">
+                        <tr>
+                                <th>Quantity</th>
+                                <th>Item Name</th>
+                                <th>Price</th>
+                                <th>Total Cost</th>
+                        </tr>
+                        <script>
+                                var s = "";
+                                for (i=0; i<menuItems.length; i++)
+                                {
+                                        s += "<tr>";
+                                        s += tableData(chooseItem("quantity" + i, 0, 5), "selectQuantity");
+                                        s += tableData(menuItems[i].name, "itemName");
+                                        s += tableData("$ " + menuItems[i].price.toFixed(2), "price");
+                                        s += tableData("$ <input type='text' name='totalCost'/>", "totalCost");
+                                        s += "</tr>";
+                                }
+                                document.writeln(s);
+                        </script>
+                </table>
+                <div class="payment">
+                        <p class="subtotal"><label>Subtotal</label>: $ <input type="text" name="subtotal" id="subtotal"></p>
+                        <p class="discount"><label>Discount</label>: $ <input type="text" name="discount" id="discount"></p>
+                        <p class="tax"><label>Tax 6.25%:</label> $ <input type="text" name="tax" id="tax"></p>
+                        <p class="total"><label>Total</label>: $ <input type="text" name="total" id="total"></p>
+                </div>
+                <input type="button" value="Submit Order"/>
+        </form>
+        <script>
+        /* create a 2 x 5 array to store the order information */
+	let order = new Array(2);
+	for (i = 0; i < order.length; i++) {
+		order[i] = new Array(3);
+	}
+
+        /* get quantity of each item and calculate total cost */
+	const calculateCost = () => {
+
+		let price = document.getElementsByClassName("price");
+		let totalCost = document.getElementsByName("totalCost");
+		let subtotal = document.getElementById("subtotal");
+                let discount = document.getElementById("discount");
+		let tax = document.getElementById("tax");
+		let total = document.getElementById("total");
+
+		let subtotal_val = 0;
+
+		for (i = 0; i < menuItems.length; i++) {
+			let quan = document.getElementsByName("quantity" + i);
+			totalCost[i].value = (quan[0].value * menuItems[i].price).toFixed(2);
+			// fill in order array:
+			order[0][i] = menuItems[i].name;
+			order[1][i] = quan[0].value;
+			subtotal_val += Number(totalCost[i].value);
+		}
+                subtotal.value = (parseFloat(subtotal_val)).toFixed(2);
+
+                if (subtotal_val > 20) {
+                        discount_val = 0.1 * subtotal_val;
+                        if (discount_val > 0) {
+                                discount.value = parseFloat(discount_val).toFixed(2);
+                        }
+                        subtotal_val = subtotal_val - discount_val;
+                }
+
+		tax.value = (parseFloat(subtotal_val) * 0.0625).toFixed(2);
+		total.value = (parseFloat(subtotal_val) + parseFloat(parseFloat(subtotal_val) * 0.0625)).toFixed(2);
+	}
+
+        /* check that full name and phone number are entered */
+	const validateForm = () => {
+		/* check that at least one item is ordered */
+		let totalItems = 0;
+		for (i = 0; i < menuItems.length; i++) {
+			let quan = document.getElementsByName("quantity" + i);
+			totalItems += quan[0].value;
+		}
+		if (totalItems == 0) {
+			alert("Please order at least one item");
+			return false;
+		}
+		return true;
+	}
+
+        /* if valid form, display thanks message */
+	const confirmOrder = () => {
+		/* if valid form, create new window with order details */
+		let subtotal = document.querySelector("input[name='subtotal']");
+                let discount = document.querySelector("input[name='discount']");
+		let tax = document.querySelector("input[name='tax']");
+		let total = document.querySelector("input[name='total']");
+
+
+		let string = "Order Details: <br><br>";
+		string += " Order Items: <br>"
+		for (i = 0; i < menuItems.length; i++) {
+			if (order[1][i] > 0) {
+				string += order[0][i] + " - " + order[1][i] + "<br>"
+			}
+		}
+		string += "subtotal: " + subtotal.value + "<br>"
+                string += "discount: " + discount.value + "<br>"
+		string += "tax: " + tax.value + "<br>"
+		string += "total: " + total.value + "<br>"
+
+		const orderWindow = window.open();
+		orderWindow.document.write(string);
+	};
+
+	$(document).ready(function() {
+		$('select').change(calculateCost);
+		$('input[type="button"]').click(function() {
+			let valid = validateForm();
+			if (valid) {
+				$(confirmOrder);
+			} else {
+				$(invalidForm);
+			}
+		});
+	});
+        </script>
 </body>
 
 

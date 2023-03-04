@@ -15,3 +15,10 @@ body {
         color:#267528;
         background-color: rgb(241, 226, 207);
 }
+
+.choose {
+        font-size: 22px;
+        text-align: center;
+        padding: 5%;
+        margin-left: 25%;
+}
