@@ -1,0 +1,17 @@
+h1 {
+        font-size: 40px;
+        color:#ea5929;
+        font-weight: bold;
+        text-align: center;
+        font-family: 'Overpass', 'Bebas Neue', 'PT Sans','Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        letter-spacing: 0.2rem;
+}
+
+body {
+        font-size: 22px;
+        text-align: center;
+        letter-spacing: 0.2rem;
+        font-family: 'Overpass', 'Bebas Neue', 'PT Sans','Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        color:#267528;
+        background-color: rgb(241, 226, 207);
+}
