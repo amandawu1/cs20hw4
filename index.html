@@ -67,7 +67,7 @@
                 </table>
                 <div class="payment">
                         <p class="subtotal"><label>Subtotal</label>: $ <input type="text" name="subtotal" id="subtotal"></p>
-                        <p class="discount"><label>Discount</label>: $ <input type="text" name="discount" id="discount"></p>
+                        <p class="discount" ><label>Discount</label>: $ <input type="text" name="discount" id="discount"></p>
                         <p class="tax"><label>Tax 6.25%:</label> $ <input type="text" name="tax" id="tax"></p>
                         <p class="total"><label>Total</label>: $ <input type="text" name="total" id="total"></p>
                 </div>
@@ -79,6 +79,17 @@
 	for (i = 0; i < order.length; i++) {
 		order[i] = new Array(3);
 	}
+        let glob_discount = 0;
+
+        const hideDiscount = () => {
+                let discount = document.querySelector(".discount");
+                discount.style.display = "none";
+        }
+
+        const showDiscount = () => {
+                let discount = document.querySelector(".discount");
+                discount.style.display = "block";
+        }
 
         /* get quantity of each item and calculate total cost */
 	const calculateCost = () => {
@@ -106,6 +117,7 @@
                         discount_val = 0.1 * subtotal_val;
                         if (discount_val > 0) {
                                 discount.value = parseFloat(discount_val).toFixed(2);
+                                showDiscount();
                         }
                         subtotal_val = subtotal_val - discount_val;
                 }
@@ -153,8 +165,9 @@
 		const orderWindow = window.open();
 		orderWindow.document.write(string);
 	};
-
+        console.log("discount: " + discount.value);
 	$(document).ready(function() {
+                $(hideDiscount);
 		$('select').change(calculateCost);
 		$('input[type="button"]').click(function() {
 			let valid = validateForm();
